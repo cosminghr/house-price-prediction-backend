@@ -9,7 +9,6 @@ from sqlalchemy.pool import StaticPool
 from app.core.db import Base
 from app.controllers.auth_controller import get_db as auth_get_db
 from app.controllers.user_controller import get_db as users_get_db
-from app.entities.user import User
 from app.main import app
 
 TEST_DATABASE_URL = "sqlite://"
@@ -36,7 +35,6 @@ app.dependency_overrides[auth_get_db] = override_get_db
 app.dependency_overrides[users_get_db] = override_get_db
 
 
-# curăță toate tabelele înainte de fiecare test
 @pytest.fixture(scope="function", autouse=True)
 def _clean_db():
     with engine.begin() as conn:

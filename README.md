@@ -2,7 +2,7 @@
 
 This backend exposes a REST API for predicting house prices using a pre-trained machine learning model (`model.joblib`).
 
-# Task 1
+# Task 1 - User CRUD
 
 ## Step 0: Environment Setup
 - Installed Python 3.9.13
@@ -81,3 +81,20 @@ This structure ensures:
 
 ### Password Security 
 - Passwords are hashed using Passlib + bcrypt before storage.
+
+# Task 2 - JWT Authentication & Rate Limiting
+
+In this task, I enhanced the security layer of the API by replacing the simple username-password login flow with JWT-based authentication and adding rate limiting to protect against brute-force login attempts.
+
+## Step 0: JWT Access Token Login
+
+- When a user logs in, the server now generates a JWT token containing the username and user ID.
+- The token is signed using SECRET_KEY and has a configurable expiration time.
+- The client must include the token in all protected requests using: `Authorization: Bearer <access_token>`
+
+## Step 1: Rate Limiting for Login
+
+- The `/api-deutsche/auth/login` endpoint is limited to 10 login attempts per minute per username.
+- This prevents brute-force attacks and ensures secure authentication behavior. 
+- When the limit is exceeded, the server returns `429 Too Many Requests`.
+ 
