@@ -1,0 +1,8 @@
+.venv
+__pycache__
+.git
+../backend_assignment/.gitignore
+tests
+*.pyc
+*.pyo
+*.pyd
