@@ -8,6 +8,8 @@ class Settings(BaseSettings):
     RATE_LIMIT: str = "10/minute"
     MODEL_PATH: str = "model.joblib"
     TRAIN_DATA: str = "housing.csv"
+    RATE_LIMITER_BACKEND: str = "memory"
+    REDIS_URL: str = "redis://localhost:6379/0"
 
     model_config = SettingsConfigDict(
         env_file=".env",
