@@ -21,7 +21,7 @@ from app.services.auth_service import (
 )
 
 router = APIRouter(prefix="/auth", tags=["auth"])
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api-deutsche/auth/token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api-deutsche/auth/login-with-token")
 
 
 class LoginDTO(BaseModel):

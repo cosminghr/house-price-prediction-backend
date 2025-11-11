@@ -15,10 +15,14 @@ app.add_middleware(SlowAPIMiddleware)
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 
+from app.controllers.prediction_controller import router as prediction_router
+
 api = APIRouter(prefix="/api-deutsche")
 api.include_router(auth_router, tags=["auth"])
 api.include_router(user_router, prefix="/users", tags=["users"])
+api.include_router(prediction_router, tags=["predict"])
 app.include_router(api)
+
 
 
 @app.on_event("startup")

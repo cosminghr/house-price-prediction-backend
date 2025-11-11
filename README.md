@@ -17,40 +17,47 @@ I organized the backend using a layered architecture for clarity and scalability
 backend_assignment/
 │
 ├── app/
-│   ├── controllers/              
+│   ├── controllers/
 │   │   ├── auth_controller.py
-│   │   └── user_controller.py
+│   │   ├── user_controller.py
+│   │   └── prediction_controller.py
 │   │
-│   ├── core/                     
+│   ├── core/
 │   │   ├── config.py
 │   │   └── db.py
 │   │
-│   ├── dtos/                     
-│   │   └── user.py
+│   ├── dtos/
+│   │   ├── user.py
+│   │   └── prediction_dto.py
 │   │
-│   ├── entities/                 
-│   │   └── user.py
+│   ├── entities/
+│   │   ├── user.py
+│   │   └── prediction.py
 │   │
-│   ├── repositories/             
-│   │   └── user_repository.py
+│   ├── repositories/
+│   │   ├── user_repository.py
+│   │   └── prediction_repository.py
 │   │
-│   ├── services/                 
+│   ├── services/
 │   │   ├── auth_service.py
-│   │   └── user_service.py
+│   │   ├── user_service.py
+│   │   └── prediction_service.py
 │   │
-│   ├── main.py                   
-│   └── router.py                 
+│   ├── main.py
+│   └── router.py
 │
-├── model.joblib                 
-├── housing.csv                  
+├── model.joblib
+├── housing.csv
 │
-├── requirements.txt              
+├── requirements.txt
 ├── Dockerfile                    # (To be completed in upcoming tasks)
 ├── docker-compose.yml            # (To be completed in upcoming tasks)
 │
-└── tests/                        
+└── tests/
     ├── conftest.py
-    └── test_users.py
+    ├── test_users.py
+    └── test_prediction.py
+
 
 ```
 
@@ -98,3 +105,28 @@ In this task, I enhanced the security layer of the API by replacing the simple u
 - This prevents brute-force attacks and ensures secure authentication behavior. 
 - When the limit is exceeded, the server returns `429 Too Many Requests`.
  
+# Task 3 - Predictions (protected)
+
+In this task, I added support for running price predictions using the provided `model.joblib`, and storing each prediction in the database together with the user who generated it.
+
+| DTO                  | Purpose                                                                             |
+| -------------------- | ----------------------------------------------------------------------------------- |
+| **PredictionInput**  | Validates and structures the input features required for prediction.                |
+| **PredictionOutput** | Defines what is returned after a prediction: the predicted price and prediction ID. |
+| **PredictionRead**   | Used for returning stored past predictions per user.                                |
+
+
+
+- Prediction API (protected via JWT):
+  
+- - `POST /api-deutsche/predict` - run a prediction and store it
+- - `GET /api-deutsche/predict` - list predictions for the authenticated user
+
+Model Input Encoding
+
+The model expects exactly 13 features in the same order it was originally trained. Therefore, the categorical field ocean_proximity is one-hot encoded using a fixed category ordering:
+
+| Type                    | Features                                                                                                                    |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| Numeric (8)             | `longitude`, `latitude`, `housing_median_age`, `total_rooms`, `total_bedrooms`, `population`, `households`, `median_income` |
+| One-hot categorical (5) | one element set to `1`, the others `0`, based on `ocean_proximity` category                                                 |
