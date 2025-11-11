@@ -130,3 +130,22 @@ The model expects exactly 13 features in the same order it was originally traine
 | ----------------------- | --------------------------------------------------------------------------------------------------------------------------- |
 | Numeric (8)             | `longitude`, `latitude`, `housing_median_age`, `total_rooms`, `total_bedrooms`, `population`, `households`, `median_income` |
 | One-hot categorical (5) | one element set to `1`, the others `0`, based on `ocean_proximity` category                                                 |
+
+
+# Task 4 - Docker
+
+| Action                  | Command                                 | Notes                                     |
+| ----------------------- | --------------------------------------- | ----------------------------------------- |
+| Run tests inside Docker | `docker compose run --rm api pytest -q` | Uses the same environment as production   |
+| Start the application   | `docker compose up -d --build`          | Builds and launches both API + PostgreSQL |
+
+
+Resulting Containers
+
+When the application is running, Docker will create the following containers:
+
+| Container          | Description                                           |
+| ------------------ | ----------------------------------------------------- |
+| `house-price-api`  | The FastAPI backend service                           |
+| `house-price-db`   | PostgreSQL database                                   |
+| `house-price-test` | (Optional) used only when running tests inside Docker |

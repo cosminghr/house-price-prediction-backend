@@ -27,7 +27,7 @@ jobs:
           DATABASE_URL: sqlite:///./test.db
           SECRET_KEY: test-secret
           ACCESS_TOKEN_EXPIRE_MINUTES: 30
-          RATE_LIMIT: 1000/minute
+          RATE_LIMIT: 10/minute
           MODEL_PATH: model.joblib
         run: pytest -q
 
