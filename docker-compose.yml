@@ -22,6 +22,21 @@ services:
       - ./model.joblib:/app/model.joblib:ro
       - ./housing.csv:/app/housing.csv:ro
 
+  test:
+      build:
+        context: .
+        dockerfile: Dockerfile
+      container_name: house-price-tests
+      environment:
+        DATABASE_URL: sqlite:///./test.db
+        SECRET_KEY: ${SECRET_KEY}
+        ACCESS_TOKEN_EXPIRE_MINUTES: 30
+        RATE_LIMIT: 10/minute
+        MODEL_PATH: model.joblib
+      volumes:
+        - .:/app
+      command: pytest -q
+
   db:
     image: postgres:16
     container_name: house-price-db

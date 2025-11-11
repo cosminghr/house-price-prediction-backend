@@ -10,9 +10,7 @@ COPY requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -r /app/requirements.txt
 
 
-COPY app /app/app
-COPY model.joblib /app/model.joblib
-COPY housing.csv /app/housing.csv
+COPY . .
 
 ENV PYTHONUNBUFFERED=1 \
     PORT=8001
