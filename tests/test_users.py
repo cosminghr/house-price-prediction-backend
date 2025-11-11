@@ -137,20 +137,27 @@ def test_delete_all_users(client):
     assert r.json() == []
 
 
-def test_login_rate_limit_only_on_form_endpoint(client):
+def test_login_rate_limit_only_on_json_endpoint(client):
     _register(client, "rate_user", "p")
 
     ok = 0
     last_status = None
-    for i in range(11):
-        resp = client.post(f"{AUTH_PREFIX}/login-with-token", data={"username": "rate_user", "password": "p"})
+    for _ in range(11):
+        resp = client.post(
+            f"{AUTH_PREFIX}/login-with-token",
+            json={"username": "rate_user", "password": "p"},
+        )
         last_status = resp.status_code
         if last_status == 200:
             ok += 1
         elif last_status == 429:
             break
+
     assert ok >= 1
     assert last_status == 429
 
-    resp2 = client.post(f"{AUTH_PREFIX}/login", json={"username": "rate_user", "password": "p"})
+    resp2 = client.post(
+        f"{AUTH_PREFIX}/login",
+        json={"username": "rate_user", "password": "p"},
+    )
     assert resp2.status_code == 200
