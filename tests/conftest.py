@@ -1,12 +1,13 @@
 import os
 import sys
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
-from app.core.db import Base
+from app.core.db import Base, init_db
 from app.controllers.auth_controller import get_db as auth_get_db
 from app.controllers.user_controller import get_db as users_get_db
 from app.main import app
@@ -43,11 +44,19 @@ def _clean_db():
     yield
 
 
+@pytest.fixture(scope="session", autouse=True)
+def _init_db_once():
+    init_db()
+    yield
+
+
 @pytest.fixture(scope="session")
 def test_client():
     return TestClient(app)
 
 
 @pytest.fixture
-def client(test_client):
-    return test_client
+def client():
+    init_db()
+    with TestClient(app) as c:
+        yield c

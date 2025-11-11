@@ -1,3 +1,5 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, APIRouter
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
@@ -21,6 +23,12 @@ api.include_router(auth_router, tags=["auth"])
 api.include_router(user_router, prefix="/users", tags=["users"])
 api.include_router(prediction_router, tags=["predict"])
 app.include_router(api)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    init_db()
+    yield
 
 
 @app.on_event("startup")

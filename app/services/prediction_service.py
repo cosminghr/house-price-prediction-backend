@@ -1,3 +1,5 @@
+from decimal import Decimal, ROUND_HALF_UP
+
 import joblib
 from pathlib import Path
 from sqlalchemy.orm import Session
@@ -19,6 +21,8 @@ OCEAN_CATEGORIES = [
     'NEAR OCEAN'
 ]
 
+
+_DEC_PLACES = Decimal("0.00000001")
 
 def load_model():
 
@@ -48,10 +52,10 @@ def build_feature_vector(data: PredictionInput):
 
 def predict_and_store(db: Session, user_id: int, data: PredictionInput):
     model = load_model()
-
     feature_vector = build_feature_vector(data)
-    prediction_value = float(model.predict([feature_vector])[0])
 
-    record = create_prediction(db, user_id=user_id, inp=data, value=prediction_value)
+    raw = Decimal(str(model.predict([feature_vector])[0]))
+    value = float(raw.quantize(_DEC_PLACES, rounding=ROUND_HALF_UP))
 
-    return prediction_value, record.id
+    record = create_prediction(db, user_id=user_id, inp=data, value=value)
+    return value, record.id
