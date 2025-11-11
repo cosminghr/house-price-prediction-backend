@@ -149,3 +149,27 @@ When the application is running, Docker will create the following containers:
 | `house-price-api`  | The FastAPI backend service                           |
 | `house-price-db`   | PostgreSQL database                                   |
 | `house-price-test` | (Optional) used only when running tests inside Docker |
+
+
+# Task 5 - Docker Hub Deployment & CI/CD
+
+In this task, I automated the process of building and publishing the backend Docker image, as well as running the application using the production compose file.
+
+- Docker Hub Image - `https://hub.docker.com/r/ghermancosmin/house-price-api`
+- GitHub Actions + Secrets
+- - To allow GitHub Actions to push the image securely to Docker Hub, I added the following secrets to the repository:
+
+| Secret Name          | Value (Description)                | Purpose                                    |
+| -------------------- | ---------------------------------- | ------------------------------------------ |
+| `DOCKERHUB_USERNAME` | Docker Hub account username        | Authentication for Docker Hub push         |
+| `DOCKERHUB_TOKEN`    | Personal Access Token (read/write) | Secure permission to publish Docker images |
+
+- - These are used in the workflow file: `.github/workflows/cd.yml`
+
+## Running the Application (Production Mode)
+
+Once the image is published, the backend can be started using the production compose file: `docker compose -f docker-compose.yml --env-file .env up -d`
+
+Accessing the API: `http://localhost:8001/docs` and I recommend for testing the endpoint to use POSTMAN
+
+Running Tests in Docker: `docker compose -f docker-compose.yml run --rm api pytest -q` 
