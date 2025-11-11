@@ -1,0 +1,41 @@
+# docker-compose.prod.yml
+services:
+  api:
+    image: ghermancosmin/house-price-api:latest
+    container_name: house-price-api
+    env_file: .env
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      SECRET_KEY: ${SECRET_KEY}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES}
+      RATE_LIMIT: ${RATE_LIMIT}
+      MODEL_PATH: ${MODEL_PATH}
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "${PORT:-8001}:8001"
+    volumes:
+      - ./model.joblib:/app/model.joblib:ro
+      - ./housing.csv:/app/housing.csv:ro
+
+  db:
+    image: postgres:16
+    container_name: house-price-db
+    env_file: .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  pgdata:
